@@ -23,5 +23,86 @@
       s.parentNode.insertBefore(wf, s);
     })();
   </script>
+  <script>
+    // eslint-disable-next-line no-unused-vars
+    import adapter from 'webrtc-adapter'
+    // WebRTC适配器 只需要引入就ok
+    import jsQR from 'jsqr'
+    /**
+     * jsqr demo
+     */
+
+    export default {
+      data: () => ({
+        video: document.createElement('video'),
+        loadingMessage: '🎥 Unable to access video stream (please make sure you have a webcam enabled)',
+        // 是否显示摄像头
+        showCanvas: true,
+        canvas2d: undefined,
+        outputData: undefined,
+        canvasWidth: 320,
+        canvasHeight: 480
+      }),
+      destroyed () {
+        this.closeCamera()
+      },
+      methods: {
+        openScan () {
+          const videoParam = { video: true }
+          console.log(this.video)
+          navigator.mediaDevices.getUserMedia(videoParam).then((stream) => {
+            this.video.srcObject = stream
+            this.video.setAttribute('playsinline', true) // required to tell iOS safari we don't want fullscreen
+            this.video.play()
+            requestAnimationFrame(this.tick)
+          })
+        },
+        // 关闭摄像头
+        closeCamera () {
+          if (this.video.srcObject) {
+            this.video.srcObject.getTracks().forEach(function (track) {
+              track.stop()
+            })
+          }
+        },
+        tick () {
+          this.loadingMessage = '⌛ Loading video...'
+          if (this.video.readyState === this.video.HAVE_ENOUGH_DATA) {
+            // this.showCanvas = true
+            this.canvasHeight = this.video.videoHeight
+            this.canvasWidth = this.video.videoWidth
+            !this.canvas2d && (this.canvas2d = this.$refs.canvasElement.getContext('2d'))
+            this.canvas2d.drawImage(this.video, 0, 0, this.canvasWidth, this.canvasHeight)
+            var imageData = this.canvas2d.getImageData(0, 0, this.canvasWidth, this.canvasHeight)
+            var code = jsQR(imageData.data, imageData.width, imageData.height, {
+              inversionAttempts: 'dontInvert'
+            })
+            if (code) {
+              this.drawLine(code.location.topLeftCorner, code.location.topRightCorner, '#FF3B58')
+              this.drawLine(code.location.topRightCorner, code.location.bottomRightCorner, '#FF3B58')
+              this.drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, '#FF3B58')
+              this.drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, '#FF3B58')
+              this.outputData = code.data
+              console.log(code.data)
+              // this.closeCamera()
+              // return
+            } else {
+              this.outputData = undefined
+            }
+          }
+          requestAnimationFrame(this.tick)
+        },
+        drawLine (begin, end, color) {
+          this.canvas2d.beginPath()
+          this.canvas2d.moveTo(begin.x, begin.y)
+          this.canvas2d.lineTo(end.x, end.y)
+          this.canvas2d.lineWidth = 4
+          this.canvas2d.strokeStyle = color
+          this.canvas2d.stroke()
+        }
+      }
+    }
+    </script>
+
 </body>
 </html>

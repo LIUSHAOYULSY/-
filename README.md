@@ -9,7 +9,15 @@
 /srcs/components/headers.js/顶部各种小组件的功能设置
 /srcs/components/LeftDrawer.js/左侧弹出导航栏设置
 /srcs/components/SearchBoxs.js/顶部搜索栏及左侧设置
+/srcs/components/dashboard/BrowserUsages.js/圆饼图部分设置
 /srcs/components/dashboard/MonthlySales.js/日历内容部分设置
 /srcs/components/dashboard/NewOrders.js/曲线内容部分设置
 /srcs/components/dashboard/RecentlyProducts.js/设备部分设置
-/srcs/contains/
+/srcs/contains/app.js/菜单栏里的用户
+/srcs/contains/DashboardPage.js/四个很的设置
+/srcs/contains/FormPage.js/个人信息页面设置
+/srcs/contains/LoginPage.js/登陆页面设置
+/srcs/contains/NotFoundPage.js/404页面设置
+/srcs/contains/TablePage.js/列表页面设置
+/srcs/contains/CameraPage.js/相机页面设置
+/srcs/index.ejs/相机页面设置，添加了个script
